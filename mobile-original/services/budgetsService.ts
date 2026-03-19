@@ -1,0 +1,42 @@
+export interface Lead {
+  id: string | number;
+  name: string;
+  location: string;
+  date: string;
+  status: 'Novo' | 'Visto' | string;
+  phone: string;
+  email?: string;
+  style: string[];
+  acoustics: string;
+  infra?: string[];
+  notes?: string;
+  createdAt?: string | Date;
+}
+
+const BASE_URL = "http://192.168.0.7:3000"; 
+const API_URL = `${BASE_URL}/api/budgets`;
+
+export const budgetsService = {
+  async getLeads(): Promise<Lead[]> {
+    try {
+      const resp = await fetch(API_URL);
+      if (!resp.ok) throw new Error("Failed to fetch leads");
+      return await resp.json();
+    } catch (error) {
+      console.error("Error fetching leads:", error);
+      return [];
+    }
+  },
+
+  async markAsRead(id: string) {
+    try {
+      const resp = await fetch(`${API_URL}?id=${id}`, {
+        method: "PATCH",
+      });
+      return await resp.json();
+    } catch (error) {
+      console.error("Error updating lead status:", error);
+      return { success: false, error };
+    }
+  }
+};
