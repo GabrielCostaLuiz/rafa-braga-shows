@@ -10,7 +10,7 @@ const Hero = () => {
   const isPlayingLocalTrack = isPlaying && activeSource === "local";
 
   return (
-    <section className="relative min-h-screen w-full bg-black text-white overflow-hidden pt-10 md:pt-30 pb-30 px-4">
+    <section className="relative min-h-screen w-full bg-black text-white overflow-hidden pt-18 md:pt-30 pb-30 px-5">
       {/* Background Video */}
       <div className="absolute inset-0 z-0 overflow-hidden">
         <video
@@ -88,7 +88,7 @@ const Hero = () => {
         </button>
 
         {/* Headline */}
-        <h1 className="text-4xl md:text-7xl font-black uppercase tracking-tighter leading-[1.1] mb-8 font-outfit">
+        <h1 className="text-5xl md:text-7xl font-black uppercase tracking-tighter leading-[1.1] mb-8 font-outfit">
           A voz que marca <br />
           <span className="text-red-500/80">os seus momentos</span>
         </h1>

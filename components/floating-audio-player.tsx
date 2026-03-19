@@ -24,7 +24,7 @@ export default function FloatingAudioPlayer() {
           whileHover={{ scale: 1.05 }}
           whileTap={{ scale: 0.95 }}
           onClick={togglePlay}
-          className={`flex items-center gap-3 pr-4 p-2 rounded-full backdrop-blur-md shadow-2xl ring-1 transition-all ${
+          className={`flex items-center gap-3 md:pr-4 p-2 rounded-full backdrop-blur-md shadow-2xl ring-1 transition-all ${
             isPlaying 
               ? 'bg-red-600/20 ring-red-500/50 text-white' 
               : 'bg-black/50 ring-white/10 text-white/50 hover:bg-black/80 hover:text-white'
@@ -36,7 +36,7 @@ export default function FloatingAudioPlayer() {
                 <path d="M6 4h4v16H6zm8 0h4v16h-4z"/>
               </svg>
             ) : (
-              <svg className="w-4 h-4 ml-0.5" fill="currentColor" viewBox="0 0 24 24">
+              <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 24 24">
                 <path d="M8 5v14l11-7z"/>
               </svg>
             )}

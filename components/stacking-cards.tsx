@@ -106,15 +106,15 @@ export const Card: React.FC<CardProps> = ({
   return (
     <div
       ref={container}
-      className="h-screen flex items-center justify-center sticky top-0"
+      className="relative md:h-screen flex items-center justify-center md:sticky md:top-0 mb-10 md:mb-0"
     >
       <motion.div
         style={{
           backgroundColor: color,
-          scale,
-          top: `calc(-2vh + ${i * 25}px)`,
+          scale: typeof window !== 'undefined' && window.innerWidth < 768 ? 1 : scale,
+          top: typeof window !== 'undefined' && window.innerWidth < 768 ? 0 : `calc(-2vh + ${i * 25}px)`,
         }}
-        className="flex flex-col relative h-[480px] md:h-[60vh] w-[92%] md:w-[70%] rounded-[30px] lg:p-12 sm:p-8 p-6 origin-top shadow-2xl border border-white/5"
+        className="flex flex-col relative h-auto md:h-[60vh] w-[92%] md:w-[70%] rounded-[30px] lg:p-12 sm:p-8 p-6 origin-top shadow-2xl border border-white/5"
       >
         <div className="flex flex-col md:flex-row h-full gap-4 md:gap-10">
           <div className="flex-1 md:w-[45%] flex flex-col justify-center">

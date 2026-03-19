@@ -40,14 +40,16 @@ const Header: React.FC<HeaderProps> = ({
         <div className="flex-1 md:hidden" />
 
         {/* Logo - Sempre centralizado */}
-        <div className="flex-1 md:flex-none flex justify-center">
+        <div className="flex-1 md:flex-none flex justify-center relative">
           <Image 
             src="/logo.png" 
             alt="Rafa Braga Logo" 
             width={120} 
             height={40} 
-            className="h-8 md:h-12 w-auto object-contain brightness-0 invert opacity-80 hover:opacity-100 transition-opacity"
+            className="h-15 md:h-20 w-auto object-contain :opacity-100 transition-opacity z-10"
           />
+
+          <div className='absolute translate-y-7 md:translate-y-1/2 bg-white w-10 h-5 md:h-12 z-0 rounded-lg'/>
         </div>
 
         {/* Lado Direito */}
