@@ -154,7 +154,7 @@ export default function BentoServices() {
       />
 
       {/* Bento Grid */}
-      <div className="max-w-6xl mx-auto grid grid-cols-1 md:grid-cols-3 gap-4 auto-rows-[250px] mb-12">
+      <div className="max-w-6xl mx-auto grid grid-cols-1 md:grid-cols-3 gap-4  md:auto-rows-[250px] mb-12">
         {services.map((item, i) => (
           <BentoCard key={i} item={item} index={i} />
         ))}

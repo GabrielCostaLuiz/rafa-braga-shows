@@ -9,6 +9,7 @@ import SocialDock from "@/components/social-dock";
 import { AudioProvider } from "@/context/audio-context";
 import LogoLoop from "@/components/logo-loop";
 import FloatingAudioPlayer from "@/components/floating-audio-player";
+import Footer from "@/components/footer";
 
 export const dynamic = "force-dynamic";
 export const revalidate = 0;
@@ -86,28 +87,7 @@ export default async function Home() {
         
           <FloatingAudioPlayer />
 
-          {/* Footer Refinado */}
-          <footer className="pt-20 pb-10 px-6 bg-brand-dark flex flex-col items-center border-t border-white/5 mt-auto">
-             <h2 className="text-[12vw] leading-none uppercase font-black text-center bg-linear-to-b from-white to-white/10 bg-clip-text text-transparent mb-12 font-outfit select-none">
-               RAFA BRAGA
-             </h2>
-             
-             <div className="flex flex-col md:flex-row items-center justify-between w-full max-w-7xl gap-6 border-t border-white/10 pt-8 mt-4">
-               <div className="text-white/40 text-xs sm:text-sm font-medium tracking-widest uppercase text-center md:text-left">
-                 © {new Date().getFullYear()} Rafa Braga. Todos os direitos reservados.
-               </div>
-               
-               <a 
-                 href="https://gabrielcostaluiz.com.br" 
-                 target="_blank" 
-                 rel="noopener noreferrer" 
-                 className="group flex items-center justify-center md:justify-end gap-2 text-white/40 hover:text-white transition-colors text-xs sm:text-sm font-medium tracking-[0.2em] uppercase"
-               >
-                 <span>Desenvolvido por</span>
-                 <span className="text-red-500 font-bold group-hover:text-red-400 transition-colors">Gabriel Costa Luiz</span>
-               </a>
-             </div>
-          </footer>
+          <Footer/>
         </main>
       </div>
     </AudioProvider>
