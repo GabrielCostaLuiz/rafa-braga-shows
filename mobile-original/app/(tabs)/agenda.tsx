@@ -24,9 +24,10 @@ export default function AgendaScreen() {
     setIsLoading(true);
     try {
       const shows = await agendaService.getShows();
-      setAgenda(shows);
+      setAgenda(Array.isArray(shows) ? shows : []);
     } catch (error) {
       console.error(error);
+      setAgenda([]);
     } finally {
       setIsLoading(false);
     }
@@ -42,7 +43,6 @@ export default function AgendaScreen() {
     cep: '',
     street: '',
     number: '',
-    complement: '',
     city: '',
     time: new Date()
   });
@@ -84,7 +84,7 @@ export default function AgendaScreen() {
 
   const openAddModal = () => {
     setEditingId(null);
-    setFormData({ date: new Date(), event: '', cep: '', street: '', number: '', complement: '', city: '', time: new Date() });
+    setFormData({ date: new Date(), event: '', cep: '', street: '', number: '', city: '', time: new Date() });
     setModalVisible(true);
   };
 
@@ -94,7 +94,7 @@ export default function AgendaScreen() {
       try {
         const formattedDate = format(formData.date, "dd MMM", { locale: ptBR }).toUpperCase();
         const formattedTime = format(formData.time, "HH:mm");
-        const addressString = `${formData.street}${formData.number ? ', ' + formData.number : ''}${formData.complement ? ' (' + formData.complement + ')' : ''} - ${formData.city}`;
+        const addressString = `${formData.street}${formData.number ? ', ' + formData.number : ''} - ${formData.city}`;
 
         const eventData = {
           date: formattedDate,
@@ -161,43 +161,55 @@ export default function AgendaScreen() {
         </TouchableOpacity>
       </View>
 
-      <ScrollView style={styles.list} showsVerticalScrollIndicator={false}>
-        {agenda.map((item) => (
-          <TouchableOpacity 
-            key={item.id} 
-            style={styles.item}
-            onPress={() => {
-              setEditingId(item.id);
-              // Como convertemos para string no banco, precisamos tentar parsear de volta
-              // Mas para simplificar, setamos os campos básicos
-              setFormData({
-                ...formData,
-                event: item.event,
-                street: item.city.split(' - ')[0],
-                city: item.city.split(' - ')[1] || '',
-              });
-              setModalVisible(true);
-            }}
-          >
-            <View style={styles.dateBadge}>
-              <Text style={styles.dateText}>{item.date.split(' ')[0]}</Text>
-              <Text style={styles.monthText}>{item.date.split(' ')[1]}</Text>
-            </View>
-            <View style={styles.itemContent}>
-              <Text style={styles.eventName}>{item.event}</Text>
-              <View style={styles.infoRow}>
-                <MapPin size={12} color="rgba(255,255,255,0.4)" />
-                <Text style={styles.infoText} numberOfLines={2}>{item.city}</Text>
-              </View>
-              <View style={[styles.infoRow, { marginTop: 4 }]}>
-                <Clock size={12} color="#EF4444" />
-                <Text style={[styles.infoText, { color: '#EF4444', fontWeight: 'bold' }]}>{item.time}</Text>
-              </View>
-            </View>
-          </TouchableOpacity>
-        ))}
-        <View style={{ height: 100 }} />
-      </ScrollView>
+      {isLoading && agenda.length === 0 ? (
+        <View style={styles.loaderContainer}>
+          <ActivityIndicator size="large" color="#EF4444" />
+        </View>
+      ) : (
+        <ScrollView 
+          style={styles.list} 
+          showsVerticalScrollIndicator={false}
+          contentContainerStyle={agenda.length === 0 && styles.emptyContainer}
+        >
+          {agenda.length === 0 ? (
+            <Text style={styles.emptyText}>Nenhum show agendado.</Text>
+          ) : (
+            agenda.map((item) => (
+              <TouchableOpacity 
+                key={item.id} 
+                style={styles.item}
+                onPress={() => {
+                  setEditingId(item.id);
+                  setFormData({
+                    ...formData,
+                    event: item.event,
+                    street: item.city.split(' - ')[0],
+                    city: item.city.split(' - ')[1] || '',
+                  });
+                  setModalVisible(true);
+                }}
+              >
+                <View style={styles.dateBadge}>
+                  <Text style={styles.dateText}>{item.date.split(' ')[0]}</Text>
+                  <Text style={styles.monthText}>{item.date.split(' ')[1]}</Text>
+                </View>
+                <View style={styles.itemContent}>
+                  <Text style={styles.eventName}>{item.event}</Text>
+                  <View style={styles.infoRow}>
+                    <MapPin size={12} color="rgba(255,255,255,0.4)" />
+                    <Text style={styles.infoText} numberOfLines={2}>{item.city}</Text>
+                  </View>
+                  <View style={[styles.infoRow, { marginTop: 4 }]}>
+                    <Clock size={12} color="#EF4444" />
+                    <Text style={[styles.infoText, { color: '#EF4444', fontWeight: 'bold' }]}>{item.time}</Text>
+                  </View>
+                </View>
+              </TouchableOpacity>
+            ))
+          )}
+          <View style={{ height: 100 }} />
+        </ScrollView>
+      )}
 
       {/* Modal Reformulado */}
       <Modal 
@@ -302,16 +314,6 @@ export default function AgendaScreen() {
                       onChangeText={t => setFormData({...formData, number: t})}
                     />
                   </View>
-                  <View style={[styles.inputGroup, { flex: 1.5, marginLeft: 12 }]}>
-                    <Text style={styles.label}>Complemento</Text>
-                    <TextInput
-                      style={styles.input}
-                      placeholder="Sala, Andar, etc"
-                      placeholderTextColor="rgba(255,255,255,0.2)"
-                      value={formData.complement}
-                      onChangeText={t => setFormData({...formData, complement: t})}
-                    />
-                  </View>
                 </View>
 
                 <View style={styles.inputGroup}>
@@ -375,6 +377,9 @@ const styles = StyleSheet.create({
   title: { color: '#FFF', fontSize: 28, fontFamily: 'Outfit_700Bold', textTransform: 'uppercase' },
   addButton: { width: 52, height: 52, backgroundColor: '#EF4444', borderRadius: 18, justifyContent: 'center', alignItems: 'center' },
   list: { paddingHorizontal: 24 },
+  loaderContainer: { flex: 1, justifyContent: 'center', alignItems: 'center' },
+  emptyContainer: { flex: 1, justifyContent: 'center', alignItems: 'center', paddingTop: 100 },
+  emptyText: { color: 'rgba(255,255,255,0.2)', fontSize: 14, fontFamily: 'Montserrat_400Regular' },
   item: { flexDirection: 'row', alignItems: 'center', backgroundColor: 'rgba(255,255,255,0.05)', borderRadius: 24, padding: 16, marginBottom: 16, borderWidth: 1, borderColor: 'rgba(255,255,255,0.1)' },
   dateBadge: { width: 60, height: 60, backgroundColor: 'rgba(255,255,255,0.08)', borderRadius: 16, justifyContent: 'center', alignItems: 'center', marginRight: 16 },
   dateText: { color: '#FFF', fontSize: 18, fontFamily: 'Outfit_700Bold' },

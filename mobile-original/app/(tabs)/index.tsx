@@ -1,20 +1,57 @@
-import React from 'react';
-import { View, Text, TouchableOpacity, ScrollView, StyleSheet } from 'react-native';
+import React, { useState, useEffect, useCallback } from 'react';
+import { View, Text, TouchableOpacity, ScrollView, StyleSheet, ActivityIndicator, RefreshControl } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { Calendar, FileText, ChevronRight, TrendingUp, Users, Clock, MapPin } from 'lucide-react-native';
 import { useRouter } from 'expo-router';
+import { agendaService, Show } from '../../services/agendaService';
+import { budgetsService } from '../../services/budgetsService';
 
 export default function HomeScreen() {
   const router = useRouter();
+  const [nextShows, setNextShows] = useState<Show[]>([]);
+  const [newLeadsCount, setNewLeadsCount] = useState(0);
+  const [isLoading, setIsLoading] = useState(true);
+  const [refreshing, setRefreshing] = useState(false);
 
-  const nextShows = [
-    { id: 1, local: 'Vitória Pub', date: 'Hoje, 22:00', city: 'São Paulo' },
-    { id: 2, local: 'Arena Music', date: 'Sexta, 23:30', city: 'Curitiba' },
-  ];
+  const fetchData = async () => {
+    try {
+      const [shows, leads] = await Promise.all([
+        agendaService.getShows(),
+        budgetsService.getLeads()
+      ]);
+      
+      // Pegar apenas os 2 próximos shows (assumindo que já vêm ordenados ou apenas pegando os primeiros)
+      setNextShows(Array.isArray(shows) ? shows.slice(0, 2) : []);
+      
+      // Contar leads com status 'Novo'
+      const activeLeads = Array.isArray(leads) ? leads.filter(l => l.status === 'Novo').length : 0;
+      setNewLeadsCount(activeLeads);
+    } catch (error) {
+      console.error("Erro ao carregar dados da home:", error);
+    } finally {
+      setIsLoading(false);
+      setRefreshing(false);
+    }
+  };
+
+  useEffect(() => {
+    fetchData();
+  }, []);
+
+  const onRefresh = useCallback(() => {
+    setRefreshing(true);
+    fetchData();
+  }, []);
 
   return (
     <SafeAreaView style={styles.container}>
-      <ScrollView contentContainerStyle={styles.scrollContent} showsVerticalScrollIndicator={false}>
+      <ScrollView 
+        contentContainerStyle={styles.scrollContent} 
+        showsVerticalScrollIndicator={false}
+        refreshControl={
+          <RefreshControl refreshing={refreshing} onRefresh={onRefresh} tintColor="#EF4444" />
+        }
+      >
         {/* Header */}
         <View style={styles.header}>
           <Text style={styles.headerSubtitle}>Bem-vindo de volta,</Text>
@@ -26,20 +63,27 @@ export default function HomeScreen() {
           <View style={styles.statCard}>
             <View style={styles.statIconHeader}>
               <TrendingUp size={16} color="#EF4444" />
-              <Text style={styles.statLabel}>Leads / Mês</Text>
+              <Text style={styles.statLabel}>Total Shows</Text>
             </View>
-            <Text style={styles.statValue}>48</Text>
-            <Text style={styles.statTrend}>+12% que set.</Text>
+            <Text style={styles.statValue}>
+              {isLoading ? <ActivityIndicator size="small" color="#FFF" /> : nextShows.length}
+            </Text>
+            <Text style={styles.statTrend}>Shows agendados</Text>
           </View>
           
-          <View style={[styles.statCard, { backgroundColor: 'rgba(239, 68, 68, 0.05)', borderColor: 'rgba(239, 68, 68, 0.2)' }]}>
+          <TouchableOpacity 
+            style={[styles.statCard, { backgroundColor: 'rgba(239, 68, 68, 0.05)', borderColor: 'rgba(239, 68, 68, 0.2)' }]}
+            onPress={() => router.push('/budgets')}
+          >
             <View style={styles.statIconHeader}>
               <Users size={16} color="#EF4444" />
               <Text style={styles.statLabel}>Novos Leads</Text>
             </View>
-            <Text style={[styles.statValue, { color: '#EF4444' }]}>03</Text>
+            <Text style={[styles.statValue, { color: '#EF4444' }]}>
+              {isLoading ? <ActivityIndicator size="small" color="#EF4444" /> : String(newLeadsCount).padStart(2, '0')}
+            </Text>
             <Text style={styles.statTrend}>Aguardando retorno</Text>
-          </View>
+          </TouchableOpacity>
         </View>
 
         {/* Próximos Compromissos - New Section */}
@@ -52,19 +96,27 @@ export default function HomeScreen() {
           </View>
           
           <View style={styles.appointmentList}>
-             {nextShows.map((show) => (
-                <TouchableOpacity key={show.id} style={styles.appointmentCard} activeOpacity={0.7} onPress={() => router.push('/agenda')}>
-                   <View style={styles.appointmentTime}>
-                      <Clock size={14} color="#EF4444" />
-                      <Text style={styles.timeText}>{show.date}</Text>
-                   </View>
-                   <Text style={styles.appointmentLocal}>{show.local}</Text>
-                   <View style={styles.appointmentCity}>
-                      <MapPin size={12} color="rgba(255,255,255,0.3)" />
-                      <Text style={styles.cityText}>{show.city}</Text>
-                   </View>
-                </TouchableOpacity>
-             ))}
+             {isLoading ? (
+                <ActivityIndicator color="#EF4444" style={{ marginVertical: 20 }} />
+             ) : nextShows.length === 0 ? (
+                <View style={styles.emptyCard}>
+                   <Text style={styles.emptyText}>Sem shows próximos.</Text>
+                </View>
+             ) : (
+                nextShows.map((show) => (
+                  <TouchableOpacity key={show.id} style={styles.appointmentCard} activeOpacity={0.7} onPress={() => router.push('/agenda')}>
+                     <View style={styles.appointmentTime}>
+                        <Clock size={14} color="#EF4444" />
+                        <Text style={styles.timeText}>{show.date} - {show.time}</Text>
+                     </View>
+                     <Text style={styles.appointmentLocal}>{show.event}</Text>
+                     <View style={styles.appointmentCity}>
+                        <MapPin size={12} color="rgba(255,255,255,0.3)" />
+                        <Text style={styles.cityText} numberOfLines={1}>{show.city}</Text>
+                     </View>
+                  </TouchableOpacity>
+                ))
+             )}
           </View>
         </View>
 
@@ -193,6 +245,21 @@ const styles = StyleSheet.create({
     color: '#EF4444',
     fontSize: 12,
     fontFamily: 'Montserrat_700Bold',
+    textTransform: 'uppercase'
+  },
+  emptyCard: {
+    padding: 30,
+    backgroundColor: 'rgba(255,255,255,0.02)',
+    borderRadius: 22,
+    borderStyle: 'dashed',
+    borderWidth: 1,
+    borderColor: 'rgba(255,255,255,0.1)',
+    alignItems: 'center'
+  },
+  emptyText: {
+    color: 'rgba(255,255,255,0.3)',
+    fontSize: 14,
+    fontFamily: 'Montserrat_400Regular'
   },
   appointmentLocal: {
     color: '#FFF',

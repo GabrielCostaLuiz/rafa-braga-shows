@@ -13,7 +13,7 @@ export interface Lead {
   createdAt?: string | Date;
 }
 
-const BASE_URL = "http://192.168.0.7:3000"; 
+const BASE_URL = "https://rafabraga.vercel.app"; 
 const API_URL = `${BASE_URL}/api/budgets`;
 
 export const budgetsService = {

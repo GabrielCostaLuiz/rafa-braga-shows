@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { View, Text, StyleSheet, ScrollView, TouchableOpacity, Linking, Modal, ActivityIndicator, Alert } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { Phone, MessageCircle, Eye, X, Mail, MapPin, Music, Layout, Calendar, AlertCircle } from 'lucide-react-native';
+import { Phone, MessageCircle, Eye, X, Mail, MapPin, Music, Layout, Calendar, AlertCircle, RotateCw } from 'lucide-react-native';
 import { budgetsService, Lead } from '../../services/budgetsService';
 
 export default function BudgetsScreen() {
@@ -40,8 +40,21 @@ export default function BudgetsScreen() {
   return (
     <SafeAreaView style={styles.container}>
       <View style={styles.header}>
-        <Text style={styles.headerSubtitle}>Gerenciar</Text>
-        <Text style={styles.title}>Orçamentos</Text>
+        <View>
+          <Text style={styles.headerSubtitle}>Gerenciar</Text>
+          <Text style={styles.title}>Orçamentos</Text>
+        </View>
+        <TouchableOpacity 
+          style={styles.addButton} 
+          onPress={fetchLeads}
+          disabled={isLoading}
+        >
+          {isLoading ? (
+            <ActivityIndicator color="#FFF" size="small" />
+          ) : (
+            <RotateCw color="#FFF" size={24} />
+          )}
+        </TouchableOpacity>
       </View>
 
       {isLoading && leads.length === 0 ? (
@@ -60,9 +73,9 @@ export default function BudgetsScreen() {
             leads.map((item) => (
               <View key={item.id} style={styles.item}>
                 <View style={styles.itemHeader}>
-                  <View>
-                    <Text style={styles.customerName}>{item.name}</Text>
-                    <Text style={styles.cityText}>{item.location}</Text>
+                  <View style={{ flex: 1, marginRight: 8 }}>
+                    <Text style={styles.customerName} numberOfLines={1}>{item.name}</Text>
+                    <Text style={styles.cityText} numberOfLines={1}>{item.location}</Text>
                   </View>
                   <View style={[styles.statusBadge, { backgroundColor: item.status === 'Novo' ? '#EF4444' : 'rgba(255,255,255,0.1)' }]}>
                     <Text style={styles.statusText}>{item.status || 'Novo'}</Text>
@@ -112,26 +125,25 @@ export default function BudgetsScreen() {
                    </View>
                 </View>
 
-                {/* Seções de Informação Reais */}
                 <View style={styles.infoSection}>
                    <View style={styles.sectionHeader}>
                       <Music size={16} color="#EF4444" />
                       <Text style={styles.sectionTitle}>Estilos Musicais</Text>
                    </View>
                    <View style={styles.tagWrap}>
-                      {selectedLead.style.map((s, i) => <View key={i} style={styles.tag}><Text style={styles.tagText}>{s}</Text></View>)}
+                      {Array.isArray(selectedLead.style) ? selectedLead.style.map((s, i) => <View key={i} style={styles.tag}><Text style={styles.tagText}>{s}</Text></View>) : null}
                    </View>
                 </View>
-
+                
                 <View style={styles.infoSection}>
                    <View style={styles.sectionHeader}>
                       <AlertCircle size={16} color="#EF4444" />
                       <Text style={styles.sectionTitle}>Limitações Acústicas</Text>
                    </View>
-                   <Text style={styles.bodyText}>{selectedLead.acoustics}</Text>
+                   <Text style={styles.bodyText}>{selectedLead.acoustics || 'Não informado'}</Text>
                 </View>
 
-                {selectedLead.infra && selectedLead.infra.length > 0 && (
+                {Array.isArray(selectedLead.infra) && selectedLead.infra.length > 0 && (
                   <View style={styles.infoSection}>
                     <View style={styles.sectionHeader}>
                         <Layout size={16} color="#EF4444" />
@@ -172,19 +184,20 @@ export default function BudgetsScreen() {
 
 const styles = StyleSheet.create({
   container: { flex: 1, backgroundColor: '#010101' },
-  header: { padding: 24, paddingTop: 16 },
+  header: { padding: 24, paddingTop: 16, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' },
   headerSubtitle: { color: 'rgba(255,255,255,0.4)', fontSize: 10, fontFamily: 'Montserrat_500Medium', textTransform: 'uppercase', letterSpacing: 2 },
   title: { color: '#FFF', fontSize: 28, fontFamily: 'Outfit_700Bold', textTransform: 'uppercase' },
+  addButton: { width: 52, height: 52, backgroundColor: '#EF4444', borderRadius: 18, justifyContent: 'center', alignItems: 'center' },
   list: { paddingHorizontal: 24 },
   loaderContainer: { flex: 1, justifyContent: 'center', alignItems: 'center' },
   emptyContainer: { flex: 1, justifyContent: 'center', alignItems: 'center', paddingTop: 100 },
   emptyText: { color: 'rgba(255,255,255,0.2)', fontSize: 14, fontFamily: 'Montserrat_400Regular' },
   item: { backgroundColor: 'rgba(255,255,255,0.05)', borderRadius: 28, padding: 20, marginBottom: 16, borderWidth: 1, borderColor: 'rgba(255,255,255,0.1)' },
-  itemHeader: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: 6 },
+  itemHeader: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: 10 },
   customerName: { color: '#FFF', fontSize: 18, fontFamily: 'Outfit_700Bold' },
   cityText: { color: 'rgba(255,255,255,0.4)', fontSize: 12 },
-  statusBadge: { paddingHorizontal: 8, paddingVertical: 4, borderRadius: 8 },
-  statusText: { color: '#FFF', fontSize: 10, fontWeight: '700' },
+  statusBadge: { paddingHorizontal: 10, paddingVertical: 4, borderRadius: 8, alignSelf: 'flex-start' },
+  statusText: { color: '#FFF', fontSize: 10, fontWeight: '700', textTransform: 'uppercase' },
   dateText: { color: 'rgba(255,255,255,0.2)', fontSize: 11, marginBottom: 16 },
   actions: { flexDirection: 'row', gap: 10 },
   actionButton: { flex: 1, flexDirection: 'row', height: 48, backgroundColor: 'rgba(255,255,255,0.08)', borderRadius: 14, alignItems: 'center', justifyContent: 'center', gap: 8 },

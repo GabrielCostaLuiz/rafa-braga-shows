@@ -9,10 +9,11 @@ import SocialDock from "@/components/social-dock";
 import { AudioProvider } from "@/context/audio-context";
 import LogoLoop from "@/components/logo-loop";
 import FloatingAudioPlayer from "@/components/floating-audio-player";
-import { getShows } from "@/app/actions/agenda";
+
+export const dynamic = "force-dynamic";
+export const revalidate = 0;
 
 export default async function Home() {
-  const shows = await getShows();
   
   const logos = [
     {
@@ -72,7 +73,7 @@ export default async function Home() {
           </div>
 
           {/* Seção de Agenda — Próximos Shows */}
-          <Agenda shows={shows} />
+          <Agenda />
 
           {/* Seção Bento Grid — O que eu faço */}
           <BentoServices />

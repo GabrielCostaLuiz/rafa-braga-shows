@@ -7,7 +7,7 @@ export interface Show {
 }
 
 // URL do seu site Next.js (ajuste para localhost ou produção se necessário)
-const BASE_URL = "http://192.168.0.7:3000"; 
+const BASE_URL = "https://rafabraga.vercel.app"; 
 const API_URL = `${BASE_URL}/api/agenda`;
 
 export const agendaService = {

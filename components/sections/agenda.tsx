@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
 import SectionHeader from '@/components/section-header';
 
@@ -16,11 +16,32 @@ export interface Show {
 }
 
 function getMapsUrl(venue: string, city: string) {
-  return `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(`${venue}, ${city}`)}`;
+  // Remove TUDO que estiver entre parênteses para garantir que o Google Maps não se perca
+  const cleanVenue = venue.replace(/\s*\(.*?\)/g, "").trim();
+  return `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(`${cleanVenue}, ${city}`)}`;
 }
 
-export default function Agenda({ shows = [] }: { shows: Show[] }) {
+export default function Agenda() {
   const [isExpanded, setIsExpanded] = useState(false);
+  const [shows, setShows] = useState<Show[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
+
+  useEffect(() => {
+    async function fetchShows() {
+      try {
+        const response = await fetch('/api/agenda', { cache: 'no-store' });
+        if (response.ok) {
+          const data = await response.json();
+          setShows(data);
+        }
+      } catch (error) {
+        console.error("Erro ao carregar agenda:", error);
+      } finally {
+        setIsLoading(false);
+      }
+    }
+    fetchShows();
+  }, []);
 
   // Se não estiver expandido, mostra apenas os 5 primeiros
   const displayedShows = isExpanded ? shows : shows.slice(0, 5);
@@ -36,7 +57,24 @@ export default function Agenda({ shows = [] }: { shows: Show[] }) {
         className="mb-16 relative z-10"
       />
 
-      {shows.length === 0 ? (
+      {isLoading ? (
+        /* Skeleton Loading State */
+        <div className="max-w-4xl mx-auto flex flex-col gap-8">
+          {[1, 2, 3].map((i) => (
+            <div key={i} className="flex items-start gap-8 py-8 border-b border-white/5 animate-pulse">
+              <div className="flex flex-col items-center gap-2 shrink-0">
+                <div className="w-10 h-3 bg-white/5 rounded" />
+                <div className="w-16 h-12 bg-white/10 rounded-lg" />
+                <div className="w-10 h-3 bg-red-500/10 rounded" />
+              </div>
+              <div className="flex-1">
+                <div className="w-1/3 h-6 bg-white/10 rounded mb-4" />
+                <div className="w-1/2 h-4 bg-white/5 rounded" />
+              </div>
+            </div>
+          ))}
+        </div>
+      ) : shows.length === 0 ? (
         <div className="max-w-4xl mx-auto flex flex-col items-center justify-center py-24 bg-[rgba(255,255,255,0.02)] border border-white/5 rounded-3xl backdrop-blur-md">
           <svg className="w-16 h-16 text-white/10 mb-6 drop-shadow-lg" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="1" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" /></svg>
           <h3 className="text-2xl font-bold text-white mb-2 font-outfit uppercase tracking-tighter">Agenda Fechada</h3>
@@ -64,10 +102,10 @@ export default function Agenda({ shows = [] }: { shows: Show[] }) {
                 className="group py-6 md:py-8 border-b border-white/5 hover:border-white/15 transition-colors cursor-pointer"
               >
                 {/* Layout Mobile: empilhado / Desktop: horizontal */}
-                <div className="flex items-start gap-4 md:gap-8">
+                <div className="flex items-center gap-4 md:gap-8">
                   {/* Data */}
                   <div className="flex items-center gap-4 md:gap-6 shrink-0">
-                    <div className="flex flex-col items-center w-14 md:w-16">
+                    <div className="flex flex-col items-center">
                       <span className="text-[9px] md:text-[10px] font-bold uppercase tracking-[0.3em] text-white/30 font-sans">
                         {show.weekday}
                       </span>
@@ -90,9 +128,7 @@ export default function Agenda({ shows = [] }: { shows: Show[] }) {
                       <h3 className="text-base md:text-xl font-bold uppercase tracking-tight text-white group-hover:text-white/90 transition-colors font-outfit">
                         {show.title}
                       </h3>
-                      <span className="hidden md:block text-white/30 text-sm font-bold font-sans shrink-0">
-                        {show.time}
-                      </span>
+                    
                     </div>
 
                     {/* Local */}
@@ -128,7 +164,11 @@ export default function Agenda({ shows = [] }: { shows: Show[] }) {
                   </div>
 
                   {/* Desktop: Ver Local */}
-                  <a
+                  <div className="flex flex-col items-center gap-2">
+                      <span className="hidden md:block text-white/30 text-sm font-bold font-sans shrink-0">
+                        Horário: {show.time}
+                      </span>
+                        <a
                     href={getMapsUrl(show.venue, show.city)}
                     target="_blank"
                     rel="noopener noreferrer"
@@ -141,6 +181,8 @@ export default function Agenda({ shows = [] }: { shows: Show[] }) {
                     </svg>
                     Ver Local
                   </a>
+                  </div>
+                
                 </div>
               </motion.div>
             </motion.div>
