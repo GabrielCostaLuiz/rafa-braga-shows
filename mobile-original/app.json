@@ -1,25 +1,31 @@
 {
   "expo": {
-    "name": "mobile-original",
+    "name": "Rafa Mobile",
     "slug": "mobile-original",
     "version": "1.0.0",
     "orientation": "portrait",
-    "icon": "./assets/images/icon.png",
-    "scheme": "mobileoriginal",
+    "icon": "./assets/images/rafa_icon.jpeg",
+    "scheme": "rafamobile",
     "userInterfaceStyle": "automatic",
     "newArchEnabled": true,
+    "cli": {
+      "appVersionSource": "local"
+    },
     "ios": {
-      "supportsTablet": true
+      "supportsTablet": true,
+      "bundleIdentifier": "ios0mobile-rafa",
+      "infoPlist": {
+        "ITSAppUsesNonExemptEncryption": false
+      }
     },
     "android": {
       "adaptiveIcon": {
-        "backgroundColor": "#E6F4FE",
-        "foregroundImage": "./assets/images/android-icon-foreground.png",
-        "backgroundImage": "./assets/images/android-icon-background.png",
-        "monochromeImage": "./assets/images/android-icon-monochrome.png"
+        "backgroundColor": "#121212",
+        "foregroundImage": "./assets/images/rafa_icon.jpeg"
       },
       "edgeToEdgeEnabled": true,
-      "predictiveBackGestureEnabled": false
+      "predictiveBackGestureEnabled": false,
+      "package": "com.gabriel_costa_luiz.mobileoriginal"
     },
     "web": {
       "output": "static",
@@ -47,7 +53,11 @@
     },
     "extra": {
       "databaseUrl": "mongodb+srv://admin_rafabraga:Zigd0q6eedHw4Qcd@cluster0.8ccvu3w.mongodb.net/?appName=Cluster0",
-      "mongodbDb": "rafabraga_db"
+      "mongodbDb": "rafabraga_db",
+      "router": {},
+      "eas": {
+        "projectId": "3449276c-c949-4d66-a96b-416aab377708"
+      }
     }
   }
 }
