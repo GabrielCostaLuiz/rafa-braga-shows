@@ -331,7 +331,7 @@ export const LogoLoop = React.memo<LogoLoopProps>(
         const content = isStringNode ? (
           <img
             className={cx(
-              'h-[var(--logoloop-logoHeight)] w-auto block object-contain',
+              'h-[var(--logoloop-logoHeight)] w-auto block object-contain rounded-lg',
               '[-webkit-user-drag:none] pointer-events-none',
               '[image-rendering:-webkit-optimize-contrast]',
               'motion-reduce:transition-none',
@@ -348,7 +348,7 @@ export const LogoLoop = React.memo<LogoLoopProps>(
         ) : isNodeItem ? (
           <span
             className={cx(
-              'inline-flex items-center',
+              'inline-flex items-center rounded-lg',
               'motion-reduce:transition-none',
               scaleOnHover &&
                 'transition-transform duration-300 ease-[cubic-bezier(0.4,0,0.2,1)] group-hover/item:scale-120'
@@ -360,7 +360,7 @@ export const LogoLoop = React.memo<LogoLoopProps>(
         ) : (
           <img
             className={cx(
-              'h-[var(--logoloop-logoHeight)] w-auto block object-contain',
+              'h-[var(--logoloop-logoHeight)] w-auto block object-contain rounded-lg',
               '[-webkit-user-drag:none] pointer-events-none',
               '[image-rendering:-webkit-optimize-contrast]',
               'motion-reduce:transition-none',

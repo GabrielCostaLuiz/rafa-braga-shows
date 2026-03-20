@@ -44,6 +44,18 @@ export default async function Home() {
       node: "/logo-loop/bar_logo.png",
       title: "Bar Mooca"
     },
+    {
+      node: "/logo-loop/farol_logo.png",
+      title: "Farol da Villa Bar"
+    },
+     {
+      node: "/logo-loop/gb_logo.jpeg",
+      title: "GB Live"
+    },
+     {
+      node: "/logo-loop/local_logo.png",
+      title: "Local Division's"
+    },
   ];
 
   return (
