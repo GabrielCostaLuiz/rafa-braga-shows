@@ -14,6 +14,7 @@ export async function GET() {
       id: l._id.toString(),
       name: l.name || "",
       location: l.location || l.city || "",
+      cep: l.cep || "",
       houseNumber: l.houseNumber || "",
       showDate: l.showDate || "",
       musicians: l.musicians || "",

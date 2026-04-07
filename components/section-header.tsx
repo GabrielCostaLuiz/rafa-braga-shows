@@ -24,7 +24,7 @@ export default function SectionHeader({
         {titlePart1} <br />
         <span className={highlightColorClass}>{titlePart2}</span>
       </h2>
-      <p className="text-white/40 max-w-lg text-sm md:text-[1rem] leading-relaxed uppercase tracking-[0.2em] font-sans px-4">
+      <p className="text-white/60 max-w-lg text-sm md:text-[1rem] leading-relaxed uppercase tracking-[0.2em] font-sans px-4">
         {subtitle}
       </p>
     </div>

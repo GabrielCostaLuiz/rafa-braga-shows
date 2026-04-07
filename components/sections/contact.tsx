@@ -47,14 +47,12 @@ type FormValues = z.infer<typeof formSchema>;
 const INFRA_OPTIONS = ['Som Completo (PA)', 'Mesa de Som', 'Banda Base', 'Técnico de Som', 'Van/Transporte', 'Alimentação'];
 const STYLE_OPTIONS = ['Samba Raiz & Pagode Clássico', 'Pagode de Mesa Animado', 'Acústico / Voz e Violão', 'Eclético (Mix Completo)'];
 
-// ─── Sub-components ───────────────────────────────────────────────────────────
-
-function FieldLabel({ label, error }: { label: string; error?: string }) {
+function FieldLabel({ label, error, htmlFor }: { label: string; error?: string; htmlFor?: string }) {
   return (
     <div className="flex items-center justify-between mb-2">
-      <span className="text-[10px] font-bold uppercase tracking-[0.25em] text-white/35">
+      <label htmlFor={htmlFor} className="text-[10px] font-bold uppercase tracking-[0.25em] text-white/50">
         {label}
-      </span>
+      </label>
       <AnimatePresence mode="wait">
         {error && (
           <motion.span
@@ -343,19 +341,20 @@ export default function Contact() {
                 <p className="text-[10px] font-bold uppercase tracking-[0.3em] text-white/25 mb-4">Seus dados</p>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <div>
-                    <FieldLabel label="Nome / Empresa" error={errors.name?.message} />
-                    <input {...register('name')} type="text" placeholder="Seu nome ou empresa"
+                    <FieldLabel label="Nome / Empresa" error={errors.name?.message} htmlFor="name" />
+                    <input {...register('name')} id="name" type="text" placeholder="Seu nome ou empresa"
                       className={`${inputBase} ${errors.name ? inputError : ''}`} />
                   </div>
                   <div>
-                    <FieldLabel label="Celular / WhatsApp" error={errors.phone?.message} />
-                    <input {...register('phone')} onChange={handlePhoneInput} type="tel" placeholder="11900000000"
+                    <FieldLabel label="Celular / WhatsApp" error={errors.phone?.message} htmlFor="phone" />
+                    <input {...register('phone')} id="phone" onChange={handlePhoneInput} type="tel" placeholder="11900000000"
                       className={`${inputBase} ${errors.phone ? inputError : ''}`} />
                   </div>
                   <div className="md:col-span-2">
-                    <FieldLabel label="Data Desejada para o Show" error={errors.showDate?.message} />
+                    <FieldLabel label="Data Desejada para o Show" error={errors.showDate?.message} htmlFor="showDate" />
                     <input 
                       {...register('showDate')} 
+                      id="showDate"
                       type="date" 
                       min={new Date().toISOString().split('T')[0]}
                       max="9999-12-31"
@@ -391,9 +390,9 @@ export default function Contact() {
                   {locationMode === 'cep' ? (
                     <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                       <div className="md:col-span-1">
-                        <FieldLabel label="CEP do Evento" />
+                        <FieldLabel label="CEP do Evento" htmlFor="cep" />
                         <div className="relative">
-                          <input {...register('cep')} onBlur={handleCepBlur} type="text" placeholder="01001000" maxLength={9}
+                          <input {...register('cep')} id="cep" onBlur={handleCepBlur} type="text" placeholder="01001000" maxLength={9}
                             className={inputBase} />
                           {isFetchingCep && (
                             <div className="absolute right-3 top-1/2 -translate-y-1/2">
@@ -409,9 +408,11 @@ export default function Contact() {
                         <FieldLabel
                           label="Endereço (Auto-preenchido via CEP)"
                           error={errors.location?.message}
+                          htmlFor="location"
                         />
                         <input 
                           {...register('location')} 
+                          id="location"
                           type="text"
                           readOnly
                           placeholder="Preencha o CEP ao lado..."
@@ -421,15 +422,15 @@ export default function Contact() {
                     </div>
                   ) : (
                     <div>
-                      <FieldLabel label="Local do Evento" error={errors.location?.message} />
-                      <input {...register('location')} type="text" placeholder="Bairro, Casa de Show ou Cidade"
+                      <FieldLabel label="Local do Evento" error={errors.location?.message} htmlFor="location_manual" />
+                      <input {...register('location')} id="location_manual" type="text" placeholder="Bairro, Casa de Show ou Cidade"
                         className={`${inputBase} ${errors.location ? inputError : ''}`} />
                     </div>
                   )}
                   
                   <div>
-                    <FieldLabel label="Número / Complemento (Opcional)" error={errors.houseNumber?.message} />
-                    <input {...register('houseNumber')} type="text" placeholder="Ex: 123, Ap 42"
+                    <FieldLabel label="Número / Complemento (Opcional)" error={errors.houseNumber?.message} htmlFor="houseNumber" />
+                    <input {...register('houseNumber')} id="houseNumber" type="text" placeholder="Ex: 123, Ap 42"
                       className={inputBase} />
                   </div>
                 </div>
@@ -524,9 +525,10 @@ export default function Contact() {
 
               {/* ── Observações ── */}
               <div>
-                <FieldLabel label="Observações / Detalhes Adicionais" />
+                <FieldLabel label="Observações / Detalhes Adicionais" htmlFor="notes" />
                 <textarea
                   {...register('notes')}
+                  id="notes"
                   rows={3}
                   placeholder="Exigências especiais, cronograma, repertório específico..."
                   className={`${inputBase} resize-none`}

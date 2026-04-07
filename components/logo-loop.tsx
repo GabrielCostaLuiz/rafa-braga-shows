@@ -1,6 +1,7 @@
 'use client';
 
 import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import Image from 'next/image';
 
 export type LogoItem =
   | {
@@ -329,22 +330,21 @@ export const LogoLoop = React.memo<LogoLoopProps>(
         const isStringNode = isNodeItem && typeof (item as any).node === 'string';
 
         const content = isStringNode ? (
-          <img
-            className={cx(
-              'h-[var(--logoloop-logoHeight)] w-auto block object-contain rounded-lg',
-              '[-webkit-user-drag:none] pointer-events-none',
-              '[image-rendering:-webkit-optimize-contrast]',
-              'motion-reduce:transition-none',
-              scaleOnHover &&
-                'transition-transform duration-300 ease-[cubic-bezier(0.4,0,0.2,1)] group-hover/item:scale-120'
-            )}
-            src={(item as any).node}
-            alt={(item as any).title ?? ''}
-            title={(item as any).title}
-            loading="lazy"
-            decoding="async"
-            draggable={false}
-          />
+          <div className={cx(
+            'relative block object-contain rounded-lg',
+            '[-webkit-user-drag:none] pointer-events-none',
+            scaleOnHover &&
+              'transition-transform duration-300 ease-[cubic-bezier(0.4,0,0.2,1)] group-hover/item:scale-120'
+          )} style={{ height: toCssLength(logoHeight), width: 'auto', aspectRatio: 'auto' }}>
+            <Image
+              src={(item as any).node}
+              alt={(item as any).title ?? 'Partner Logo'}
+              height={logoHeight}
+              width={logoHeight * 3} // Placeholder width, will be constrained by object-contain
+              className="h-full w-auto object-contain"
+              loading="lazy"
+            />
+          </div>
         ) : isNodeItem ? (
           <span
             className={cx(
@@ -358,26 +358,23 @@ export const LogoLoop = React.memo<LogoLoopProps>(
             {(item as any).node}
           </span>
         ) : (
-          <img
-            className={cx(
-              'h-[var(--logoloop-logoHeight)] w-auto block object-contain rounded-lg',
-              '[-webkit-user-drag:none] pointer-events-none',
-              '[image-rendering:-webkit-optimize-contrast]',
-              'motion-reduce:transition-none',
-              scaleOnHover &&
-                'transition-transform duration-300 ease-[cubic-bezier(0.4,0,0.2,1)] group-hover/item:scale-120'
-            )}
-            src={(item as any).src}
-            srcSet={(item as any).srcSet}
-            sizes={(item as any).sizes}
-            width={(item as any).width}
-            height={(item as any).height}
-            alt={(item as any).alt ?? ''}
-            title={(item as any).title}
-            loading="lazy"
-            decoding="async"
-            draggable={false}
-          />
+          <div className={cx(
+            'relative block object-contain rounded-lg',
+            '[-webkit-user-drag:none] pointer-events-none',
+            scaleOnHover &&
+              'transition-transform duration-300 ease-[cubic-bezier(0.4,0,0.2,1)] group-hover/item:scale-120'
+          )} style={{ height: toCssLength(logoHeight), width: 'auto' }}>
+            <Image
+              src={(item as any).src}
+              sizes={(item as any).sizes || '200px'}
+              width={(item as any).width || logoHeight * 3}
+              height={(item as any).height || logoHeight}
+              alt={(item as any).alt ?? 'Logo'}
+              className="h-full w-auto object-contain"
+              loading="lazy"
+              decoding="async"
+            />
+          </div>
         );
 
         const itemAriaLabel = isNodeItem

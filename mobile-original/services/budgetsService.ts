@@ -2,6 +2,7 @@ export interface Lead {
   id: string | number;
   name: string;
   location: string;
+  cep?: string;
   houseNumber?: string;
   showDate?: string;
   musicians?: string;
@@ -22,7 +23,7 @@ const API_URL = `${BASE_URL}/api/budgets`;
 export const budgetsService = {
   async getLeads(): Promise<Lead[]> {
     try {
-      const resp = await fetch(API_URL);
+      const resp = await fetch(`${API_URL}?t=${Date.now()}`);
       if (!resp.ok) throw new Error("Failed to fetch leads");
       return await resp.json();
     } catch (error) {

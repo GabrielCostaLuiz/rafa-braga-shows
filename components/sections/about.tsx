@@ -145,7 +145,7 @@ export default function About() {
               <span className="text-3xl md:text-4xl font-black text-white font-outfit leading-none mb-2">
                 {stat.value}
               </span>
-              <span className="text-[10px] text-white/35 uppercase tracking-[0.3em]"
+              <span className="text-[10px] text-white/50 uppercase tracking-[0.3em]"
                 style={{ fontFamily: "'DM Sans', sans-serif" }}>
                 {stat.label}
               </span>

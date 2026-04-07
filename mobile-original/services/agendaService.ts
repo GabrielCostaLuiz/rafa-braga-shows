@@ -16,7 +16,7 @@ const API_URL = `${BASE_URL}/api/agenda`;
 export const agendaService = {
   async getShows(): Promise<Show[]> {
     try {
-      const resp = await fetch(API_URL);
+      const resp = await fetch(`${API_URL}?t=${Date.now()}`);
       if (!resp.ok) throw new Error("Failed to fetch shows");
       return await resp.json();
     } catch (error) {

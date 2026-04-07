@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useCallback, useMemo } from 'react';
-import { View, Text, StyleSheet, ScrollView, TouchableOpacity, Linking, Modal, ActivityIndicator, Alert, TextInput } from 'react-native';
+import { View, Text, StyleSheet, ScrollView, TouchableOpacity, Linking, Modal, ActivityIndicator, Alert, TextInput, Clipboard } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { Phone, MessageCircle, Eye, X, Music, Layout, Calendar, AlertCircle, RotateCw, Trash2, Plus, Search, ChevronDown } from 'lucide-react-native';
+import { Phone, MessageCircle, Eye, X, Music, Layout, Calendar, AlertCircle, RotateCw, Trash2, Plus, Search, ChevronDown, MapPin, Copy } from 'lucide-react-native';
 import { budgetsService, Lead } from '../../services/budgetsService';
 import { format, parseISO, isValid } from 'date-fns';
 
@@ -94,7 +94,7 @@ export default function BudgetsScreen() {
     const details = `
 📊 *Detalhes do Pedido:*
 📅 Data: ${formatDate(lead.showDate)}
-📍 Local: ${lead.location}${lead.houseNumber ? `, ${lead.houseNumber}` : ''}
+📍 Local: ${lead.location}${lead.houseNumber ? `, ${lead.houseNumber}` : ''}${lead.cep ? `\n📮 CEP: ${lead.cep}` : ''}
 🎵 Estilo: ${Array.isArray(lead.style) ? lead.style.join(', ') : (lead.style || 'Não informado')}
 🎸 Músicos: ${lead.musicians || 'Não informado'}
 🔊 Acústica: ${lead.acoustics || 'Não informado'}
@@ -300,7 +300,23 @@ export default function BudgetsScreen() {
               <ScrollView showsVerticalScrollIndicator={false}>
                 <View style={styles.mainInfo}>
                   <Text style={styles.detailName}>{selectedLead.name}</Text>
-                  <Text style={styles.cityLabel}>{selectedLead.location}</Text>
+                  <Text style={styles.cityLabel}>
+                    {selectedLead.location}
+                    {selectedLead.houseNumber ? `, nº ${selectedLead.houseNumber}` : ''}
+                  </Text>
+                  {selectedLead.cep && (
+                    <TouchableOpacity 
+                      style={styles.cepContainer}
+                      onPress={() => {
+                        Clipboard.setString(selectedLead.cep!);
+                        Alert.alert("Sucesso", "CEP copiado para a área de transferência!");
+                      }}
+                    >
+                      <MapPin size={14} color="#EF4444" />
+                      <Text style={styles.cepValue}>CEP: {selectedLead.cep}</Text>
+                      <Copy size={12} color="rgba(255,255,255,0.4)" style={{ marginLeft: 4 }} />
+                    </TouchableOpacity>
+                  )}
                 </View>
 
                 {/* Status Selector */}
@@ -478,6 +494,28 @@ export default function BudgetsScreen() {
               </View>
 
               <View style={styles.formGroup}>
+                <Text style={styles.label}>CEP</Text>
+                <TextInput
+                  style={styles.input}
+                  value={newLead.cep}
+                  onChangeText={t => setNewLead({ ...newLead, cep: t })}
+                  placeholder="08031-440"
+                  placeholderTextColor="rgba(255,255,255,0.2)"
+                />
+              </View>
+
+              <View style={styles.formGroup}>
+                <Text style={styles.label}>Número</Text>
+                <TextInput
+                  style={styles.input}
+                  value={newLead.houseNumber}
+                  onChangeText={t => setNewLead({ ...newLead, houseNumber: t })}
+                  placeholder="Ex: 130"
+                  placeholderTextColor="rgba(255,255,255,0.2)"
+                />
+              </View>
+
+              <View style={styles.formGroup}>
                 <Text style={styles.label}>Observações</Text>
                 <TextInput
                   style={[styles.input, { height: 100, textAlignVertical: 'top' }]}
@@ -547,7 +585,19 @@ const styles = StyleSheet.create({
   modalTitle: { color: 'rgba(255,255,255,0.3)', fontSize: 10, fontFamily: 'Montserrat_700Bold', textTransform: 'uppercase', letterSpacing: 2 },
   mainInfo: { marginBottom: 16 },
   detailName: { color: '#FFF', fontSize: 32, fontFamily: 'Outfit_700Bold' },
-  cityLabel: { color: 'rgba(255,255,255,0.4)', fontSize: 14 },
+  cityLabel: { color: 'rgba(255,255,255,0.4)', fontSize: 14, marginBottom: 8 },
+  cepContainer: { 
+    flexDirection: 'row', 
+    alignItems: 'center', 
+    gap: 6, 
+    backgroundColor: 'rgba(255,255,255,0.05)', 
+    alignSelf: 'flex-start',
+    paddingHorizontal: 12,
+    paddingVertical: 6,
+    borderRadius: 10,
+    marginTop: 4
+  },
+  cepValue: { color: '#FFF', fontSize: 12, fontWeight: '600' },
 
   // Status Selector
   statusSelector: { marginBottom: 24 },

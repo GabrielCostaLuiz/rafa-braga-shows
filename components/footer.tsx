@@ -70,21 +70,21 @@ export default function Footer() {
 
           {/* Col 1 — Tagline */}
           <div className="flex flex-col gap-4">
-            <span className="text-white/25 text-[10px] tracking-[0.4em] uppercase font-sans">Sobre</span>
-            <p className="text-white/50 text-sm leading-relaxed font-sans font-light max-w-[220px]">
+            <span className="text-white/50 text-[10px] tracking-[0.4em] uppercase font-sans">Sobre</span>
+            <p className="text-white/60 text-sm leading-relaxed font-sans font-light max-w-[220px]">
               Música ao vivo com alma, energia e carisma para os momentos que importam.
             </p>
           </div>
 
           {/* Col 2 — Nav */}
           <div className="flex flex-col gap-4">
-            <span className="text-white/25 text-[10px] tracking-[0.4em] uppercase font-sans">Navegação</span>
+            <span className="text-white/50 text-[10px] tracking-[0.4em] uppercase font-sans">Navegação</span>
             <nav className="flex flex-col gap-2">
               {NAV_LINKS.map(link => (
                 <a
                   key={link.href}
                   href={link.href}
-                  className="text-white/40 hover:text-white text-sm font-sans tracking-wide transition-colors w-fit"
+                  className="text-white/60 hover:text-white text-sm font-sans tracking-wide transition-colors w-fit"
                 >
                   {link.label}
                 </a>
@@ -140,7 +140,7 @@ export default function Footer() {
             </span>
           </a>
 
-          <p className="text-white/25 text-xs font-sans tracking-widest uppercase">
+          <p className="text-white/50 text-xs font-sans tracking-widest uppercase">
             © {new Date().getFullYear()} Rafa Braga. Todos os direitos reservados.
           </p>
         </div>

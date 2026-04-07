@@ -9,6 +9,7 @@ import { budgetsService } from '../../services/budgetsService';
 export default function HomeScreen() {
   const router = useRouter();
   const [nextShows, setNextShows] = useState<Show[]>([]);
+  const [totalShows, setTotalShows] = useState(0);
   const [newLeadsCount, setNewLeadsCount] = useState(0);
   const [isLoading, setIsLoading] = useState(true);
   const [refreshing, setRefreshing] = useState(false);
@@ -20,11 +21,11 @@ export default function HomeScreen() {
         budgetsService.getLeads()
       ]);
       
-      // Pegar apenas os 2 próximos shows (assumindo que já vêm ordenados ou apenas pegando os primeiros)
-      setNextShows(Array.isArray(shows) ? shows.slice(0, 2) : []);
+      const showsArray = Array.isArray(shows) ? shows : [];
+      setTotalShows(showsArray.length);
+      setNextShows(showsArray.slice(0, 2));
       
-      // Contar leads com status 'Novo'
-      const activeLeads = Array.isArray(leads) ? leads.filter(l => l.status === 'Novo').length : 0;
+      const activeLeads = Array.isArray(leads) ? leads.filter(l => l.status === 'Novo' || l.status === 'pending').length : 0;
       setNewLeadsCount(activeLeads);
     } catch (error) {
       console.error("Erro ao carregar dados da home:", error);
@@ -68,7 +69,7 @@ export default function HomeScreen() {
               <Text style={styles.statLabel}>Total Shows</Text>
             </View>
             <Text style={styles.statValue}>
-              {isLoading ? <ActivityIndicator size="small" color="#FFF" /> : nextShows.length}
+              {isLoading ? <ActivityIndicator size="small" color="#FFF" /> : String(totalShows).padStart(2, '0')}
             </Text>
             <Text style={styles.statTrend}>Shows agendados</Text>
           </View>
@@ -260,11 +261,5 @@ const styles = StyleSheet.create({
   cityText: {
     color: 'rgba(255, 255, 255, 0.3)',
     fontSize: 12,
-  },
-  shortcutLabel: {
-    color: '#FFF',
-    fontSize: 12,
-    fontFamily: 'Montserrat_700Bold',
-    textTransform: 'uppercase',
   }
 });

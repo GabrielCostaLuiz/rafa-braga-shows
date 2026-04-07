@@ -18,6 +18,8 @@ const Hero = () => {
           loop
           muted
           playsInline
+          preload="none"
+          title="Vídeo de performance do Rafa Braga"
           className="absolute min-w-full min-h-full object-cover opacity-20 scale-100"
         >
           <source src="/hero.mp4" type="video/mp4" />

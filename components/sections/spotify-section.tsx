@@ -51,6 +51,12 @@ export default function SpotifySection() {
         const callback = (EmbedController: any) => {
           controllersRef.current[index] = EmbedController;
           
+          // Adiciona título ao iframe para acessibilidade
+          const iframe = element.querySelector('iframe');
+          if (iframe) {
+            iframe.setAttribute('title', `Player Spotify - ${artist.label}`);
+          }
+          
           if (index === 0) {
             setSpotifyController(EmbedController);
           }
@@ -156,7 +162,7 @@ export default function SpotifySection() {
         {/* Container do Player - Grid para 2 artistas */}
         <div className="max-w-6xl mx-auto grid grid-cols-1 lg:grid-cols-2 gap-8 relative z-10">
           {ARTISTS.map((artist, idx) => (
-            <div>
+            <div key={artist.id}>
                <motion.div
               key={artist.id}
               initial={{ opacity: 0, y: 30, scale: 0.98 }}
