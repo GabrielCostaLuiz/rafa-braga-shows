@@ -18,14 +18,24 @@ const showSchema = z.object({
   time: z.string().optional(),
   showOnSite: z.boolean().optional(),
   active: z.boolean().optional(),
+  fullDate: z.string().optional(), // ISO String used for expiration logic
 });
 
 export async function GET(request: Request) {
-  if (!isValidApiKey(request)) return unauthorizedResponse();
-
   try {
     const collection = await getCollection("agenda");
-    const shows = await collection.find({ active: { $ne: false } }).sort({ createdAt: -1 }).toArray();
+    
+    const now = new Date();
+    // Para que o show suma apenas no dia seguinte, comparamos com o início de HOJE (00:00:00)
+    now.setHours(0, 0, 0, 0);
+
+    const shows = await collection.find({ 
+      active: { $ne: false },
+      $or: [
+        { fullDate: { $exists: false } }, 
+        { fullDate: { $gte: now.toISOString() } }
+      ]
+    }).sort({ fullDate: 1, createdAt: -1 }).toArray();
     
     return NextResponse.json(shows.map(s => {
       const dateParts = (s.date || "").split(" ");
@@ -42,7 +52,8 @@ export async function GET(request: Request) {
         venue: cityParts[0] || "",
         city: cityParts[1] || cityParts[0] || "",
         time: s.time || "",
-        showOnSite: s.showOnSite !== false
+        showOnSite: s.showOnSite !== false,
+        fullDate: s.fullDate
       };
     }));
   } catch (error) {
@@ -116,10 +127,7 @@ export async function DELETE(request: Request) {
     if (!ObjectId.isValid(id)) return NextResponse.json({ error: "Invalid ID format" }, { status: 400 });
 
     const collection = await getCollection("agenda");
-    await collection.updateOne(
-      { _id: new ObjectId(id) },
-      { $set: { active: false, updatedAt: new Date() } }
-    );
+    await collection.deleteOne({ _id: new ObjectId(id) });
     
     return NextResponse.json({ success: true });
   } catch (error) {

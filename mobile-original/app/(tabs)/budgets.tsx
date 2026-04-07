@@ -252,7 +252,7 @@ export default function BudgetsScreen() {
         <ScrollView
           style={styles.list}
           showsVerticalScrollIndicator={false}
-          contentContainerStyle={filteredLeads.length === 0 ? styles.emptyContainer : undefined}
+          contentContainerStyle={filteredLeads.length === 0 ? styles.emptyContainer : styles.listContent}
         >
           {filteredLeads.length === 0 ? (
             <Text style={styles.emptyText}>
@@ -563,10 +563,11 @@ const styles = StyleSheet.create({
   filterChipTextActive: { color: '#FFF' },
 
   // List
-  list: { paddingHorizontal: 24 },
+  list: { flex: 1 },
+  listContent: { paddingHorizontal: 24, paddingBottom: 100 },
   loaderContainer: { flex: 1, justifyContent: 'center', alignItems: 'center' },
-  emptyContainer: { flex: 1, justifyContent: 'center', alignItems: 'center', paddingTop: 100 },
-  emptyText: { color: 'rgba(255,255,255,0.2)', fontSize: 14, fontFamily: 'Montserrat_400Regular' },
+  emptyContainer: { paddingHorizontal: 24, paddingTop: 60, alignItems: 'center' },
+  emptyText: { color: 'rgba(255,255,255,0.2)', fontSize: 13, fontFamily: 'Montserrat_400Regular', textAlign: 'center' },
   item: { backgroundColor: 'rgba(255,255,255,0.05)', borderRadius: 28, padding: 20, marginBottom: 16, borderWidth: 1, borderColor: 'rgba(255,255,255,0.1)' },
   itemHeader: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: 10 },
   customerName: { color: '#FFF', fontSize: 18, fontFamily: 'Outfit_700Bold' },

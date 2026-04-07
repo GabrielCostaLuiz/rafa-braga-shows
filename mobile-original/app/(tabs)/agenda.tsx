@@ -114,6 +114,7 @@ export default function AgendaScreen() {
           city: addressString,
           time: formattedTime,
           showOnSite: formData.showOnSite,
+          fullDate: formData.date.toISOString(),
         };
 
         if (editingId) {
@@ -199,7 +200,7 @@ export default function AgendaScreen() {
         <ScrollView
           style={styles.list}
           showsVerticalScrollIndicator={false}
-          contentContainerStyle={filteredAgenda.length === 0 ? styles.emptyContainer : undefined}
+          contentContainerStyle={filteredAgenda.length === 0 ? styles.emptyContainer : styles.listContent}
         >
           {filteredAgenda.length === 0 ? (
             <Text style={styles.emptyText}>
@@ -437,10 +438,11 @@ const styles = StyleSheet.create({
   searchBar: { flexDirection: 'row', alignItems: 'center', marginHorizontal: 24, marginBottom: 16, backgroundColor: 'rgba(255,255,255,0.05)', borderRadius: 16, paddingHorizontal: 16, height: 48, gap: 10, borderWidth: 1, borderColor: 'rgba(255,255,255,0.08)' },
   searchInput: { flex: 1, color: '#FFF', fontSize: 14 },
 
-  list: { paddingHorizontal: 24 },
+  list: { flex: 1 },
+  listContent: { paddingHorizontal: 24, paddingBottom: 100 },
   loaderContainer: { flex: 1, justifyContent: 'center', alignItems: 'center' },
-  emptyContainer: { flex: 1, justifyContent: 'center', alignItems: 'center', paddingTop: 100 },
-  emptyText: { color: 'rgba(255,255,255,0.2)', fontSize: 14, fontFamily: 'Montserrat_400Regular' },
+  emptyContainer: { paddingHorizontal: 24, paddingTop: 60, alignItems: 'center' },
+  emptyText: { color: 'rgba(255,255,255,0.2)', fontSize: 13, fontFamily: 'Montserrat_400Regular', textAlign: 'center' },
   item: { flexDirection: 'row', alignItems: 'center', backgroundColor: 'rgba(255,255,255,0.05)', borderRadius: 24, padding: 16, marginBottom: 16, borderWidth: 1, borderColor: 'rgba(255,255,255,0.1)' },
   dateBadge: { width: 60, height: 60, backgroundColor: 'rgba(255,255,255,0.08)', borderRadius: 16, justifyContent: 'center', alignItems: 'center', marginRight: 16 },
   dateTextBadge: { color: '#FFF', fontSize: 18, fontFamily: 'Outfit_700Bold' },
