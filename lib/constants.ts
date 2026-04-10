@@ -2,7 +2,6 @@ import {
   IconBrandInstagram, 
   IconBrandTiktok, 
   IconBrandSpotify, 
-  IconBrandYoutube, 
   IconBrandFacebook, 
   IconBrandWhatsapp 
 } from '@tabler/icons-react';
@@ -35,12 +34,6 @@ export const RAFA_BRAGA_DATA = {
       name: 'Spotify',
       href: 'https://open.spotify.com/artist/5XxPfh8njv8xZ2QIUd9H7t', 
       icon: React.createElement(IconBrandSpotify, { size: 18 }) 
-    },
-    { 
-      label: 'YouTube', 
-      name: 'YouTube',
-      href: 'https://www.youtube.com/@RafaBragaCantor', 
-      icon: React.createElement(IconBrandYoutube, { size: 18 }) 
     },
     { 
       label: 'Facebook', 
